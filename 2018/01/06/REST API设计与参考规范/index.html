@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" >
+    <title>
+        
+        REST API设计与参考规范 · YuZhang&#39;s Studio
+        
+    </title>
+    <link rel="icon" href= /assets/favicon.ico>
+    <!-- TODO: 在font-face加载完毕后改变字体  -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/webfont/1.6.28/webfontloader.js"></script>
+    <!-- 提前加载place holder  -->
+    <style type="text/css">
+        @font-face {
+            font-family: 'Oswald-Regular';
+            src: url(/font/Oswald-Regular.ttf);
+        }
+    </style>
+    <style type="text/css">
+        .site-intro {
+            position: relative;
+            width: 100%;
+            height: 50vh;
+            overflow: hidden;
+            box-shadow: -0.1rem 0 0.5rem 0 rgba(0, 0, 0, 0.5);
+        }
+        .site-intro-placeholder {
+            position: absolute;
+            z-index: -2;
+            top: 0;
+            left: 0px;
+            width: calc(100% + 300px);
+            height: 100%;
+            background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+            background-position: center center;
+            transform: translate3d(-226px, 0, 0);
+            animation: gradient-move 2.5s ease-out 0s 1;
+        }
+        @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+</style>
+    <link rel="stylesheet" href = /css/style.css?v=20171227 />
+    <script src="//cdn.staticfile.org/jquery/3.2.1/jquery.min.js" defer></script>
+    
+    <script src="/scripts/main.js" defer></script>
+    <!-- 百度统计  -->
+    
+    <!-- 谷歌统计  -->
+    
+</head>
+
+    
+        <body class="post-body">
+    
+    
+<header class="header">
+
+    <div class="read-progress"></div>
+    <div class="header-sidebar-menu">&#xe775;</div>
+    <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/" >YuZhang&#39;s Studio.</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">REST API设计与参考规范</a>
+            </div>
+    </div>
+    
+    <a class="home-link" href=/>YuZhang's Studio.</a>
+</header>
+    <div class="wrapper">
+        <div class="site-intro">
+    
+    <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
+            
+    <div class="site-intro-img" style="background-image: url(/avatar/back3.jpg)"></div>
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+            REST API设计与参考规范
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+            
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页meta -->
+        
+            <!-- 文章页标签  -->
+            
+                <div class= post-intro-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-href = 技术文章>技术文章</a>
+    
+</div>
+            
+            <script>window._bd_share_config = { "common": { "bdSnsKey": {}, "bdText": "", "bdMini": "2", "bdMiniList": false, "bdPic": "", "bdStyle": "1", "bdSize": "16" }, "share": {} }; with (document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = 'http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion=' + ~(-new Date() / 36e5)];</script>
+            <div class="post-intro-meta">
+                <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                <span class="post-intro-time">2018/01/06</span>
+                <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                    <span class="iconfont-archer">&#xe604;</span>
+                    <span id="busuanzi_value_page_pv"></span>
+                </span>
+                <span class="shareWrapper">
+                    <span class="iconfont-archer shareIcon">
+                        &#xe601;
+                    </span>
+                    <span class="bdsharebuttonbox">
+                        <a href="#" class="bds_more shareText" data-cmd="more">Share</a>
+                    </span>
+                </span>
+            </div>
+        
+    </div>
+</div>
+        <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+        <script>
+            var browser = {
+                    versions: function () {
+                        var u = window.navigator.userAgent;
+                        return {
+                            userAgent: u,
+                            trident: u.indexOf('Trident') > -1, //IE内核
+                            presto: u.indexOf('Presto') > -1, //opera内核
+                            webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+                            gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+                            mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+                            ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+                            android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+                            iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+                            iPad: u.indexOf('iPad') > -1, //是否为iPad
+                            webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+                            weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+                            uc: u.indexOf('UCBrowser') > -1 //是否为android下的UC浏览器
+                        };
+                    }()
+                }
+
+            function fontLoaded(){
+                console.log('font loaded');
+                if (document.getElementsByClassName('site-intro-meta')) {
+                    document.getElementsByClassName('intro-title')[0].classList.add('intro-fade-in');
+                    document.getElementsByClassName('intro-subtitle')[0].classList.add('intro-fade-in');
+                    var postIntroTags = document.getElementsByClassName('post-intro-tags')[0],
+                        postIntroMeat = document.getElementsByClassName('post-intro-meta')[0];
+                        if (postIntroTags) {
+                            postIntroTags.classList.add('post-fade-in');
+                        }
+                        if (postIntroMeat) {
+                            postIntroMeat.classList.add('post-fade-in');
+                        }
+                    }
+                }
+                
+            console.log("userAgent:" + browser.versions.userAgent);
+            // UC不支持跨域，所以直接显示
+            if (browser.versions.uc) {
+                console.log("UCBrowser");
+                fontLoaded();
+            } else {
+                WebFont.load({
+                    custom: {
+                        families: ['Oswald-Regular']
+                    },
+                    loading: function () {  //所有字体开始加载
+                        // console.log('loading');
+                    },
+                    active: function () {  //所有字体已渲染
+                        fontLoaded();
+                    },
+                    inactive: function () { //字体预加载失败，无效字体或浏览器不支持加载
+                        console.log('inactive: timeout');
+                        fontLoaded();
+                    },
+                    timeout: 7000 // Set the timeout to two seconds
+                });
+            }
+        </script>
+        <div class="container container-unloaded">
+            <main class="main post-page">
+    <article class="article-entry">
+        <h2 id="REST-API设计与参考规范"><a href="#REST-API设计与参考规范" class="headerlink" title="REST API设计与参考规范"></a><a href="#REST-API设计与参考规范" title="REST API设计与参考规范"></a>REST API设计与参考规范</h2><h3 id="1-参考文章"><a href="#1-参考文章" class="headerlink" title="1.参考文章"></a><a href="#1-参考文章" title="1.参考文章"></a>1.参考文章</h3><ol>
+<li><a href="https://github.com/aisuhua/restful-api-design-references" target="_blank" rel="noopener">https://github.com/aisuhua/restful-api-design-references</a></li>
+<li><a href="http://restcookbook.com/" target="_blank" rel="noopener">http://restcookbook.com/</a></li>
+<li><a href="http://www.freebuf.com/articles/web/82108.html" target="_blank" rel="noopener">http://www.freebuf.com/articles/web/82108.html</a></li>
+<li><a href="http://www.ruanyifeng.com/blog/2014/05/restful_api" target="_blank" rel="noopener">http://www.ruanyifeng.com/blog/2014/05/restful_api</a></li>
+<li><a href="http://novoland.github.io/%E8%AE%BE%E8%AE%A1/2015/08/17/Restful%20API%20%E7%9A%84%E8%AE%BE%E8%AE%A1%E8%A7%84%E8%8C%83.html" target="_blank" rel="noopener">http://novoland.github.io/%E8%AE%BE%E8%AE%A1/2015/08/17/Restful%20API%20%E7%9A%84%E8%AE%BE%E8%AE%A1%E8%A7%84%E8%8C%83.html</a></li>
+<li><a href="http://dev.enchant.com/api/v1" target="_blank" rel="noopener">http://dev.enchant.com/api/v1</a></li>
+</ol>
+<hr>
+<h3 id="2-URI格式规范"><a href="#2-URI格式规范" class="headerlink" title="2.URI格式规范"></a><a href="#2-URI格式规范" title="2.URI格式规范"></a>2.URI格式规范</h3><ul>
+<li><strong>URI(Uniform Resource Identifiers) 统一资源标示符</strong></li>
+<li><strong>URL(Uniform Resource Locator) 统一资源定位符</strong><br><strong>URI的格式定义如下：</strong><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">URI = scheme &quot;://&quot; authority &quot;/&quot; path [ &quot;?&quot; query ] [ &quot;#&quot; fragment ]</div></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<p>URL是URI的一个子集(一种具体实现)，对于REST API来说一个资源一般对应一个唯一的URI(URL)。在URI的设计中，我们会遵循一些规则，使接口看起透明易读，方便使用者调用。</p>
+<ul>
+<li><strong>关于分隔符“/”的使用</strong><br>“/“分隔符一般用来对资源层级的划分，例如<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><a href="http://api.canvas.restapi.org/shapes/polygons/quadrilaterals/squares" target="_blank" rel="noopener">http://api.canvas.restapi.org/shapes/polygons/quadrilaterals/squares</a></div></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<p>对于REST API来说，”/“只是一个分隔符，并无其他含义。为了避免混淆，”/“不应该出现在URL的末尾。例如以下两个地址实际表示的都是同一个资源：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><a href="http://api.canvas.restapi.org/shapes/" target="_blank" rel="noopener">http://api.canvas.restapi.org/shapes/</a> </div><div class="line"><a href="http://api.canvas.restapi.org/shapes" target="_blank" rel="noopener">http://api.canvas.restapi.org/shapes</a></div></pre></td></tr></table></figure>
+
+<p>REST API对URI资源的定义具有唯一性，一个资源对应一个唯一的地址。为了使接口保持清晰干净，如果访问到末尾包含 “/“ 的地址，服务端应该301到没有 “/“的地址上。<br>当然这个规则也仅限于REST API接口的访问，对于传统的WEB页面服务来说，并不一定适用这个规则。  </p>
+<ul>
+<li><strong>URI中尽量使用连字符”-“代替下划线”_”的使用</strong><br>连字符”-“一般用来分割URI中出现的字符串(单词)，来提高URI的可读性，例如：<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><a href="http://api.example.restapi.org/blogs/mark-masse/entries/this-is-my-first-post" target="_blank" rel="noopener">http://api.example.restapi.org/blogs/mark-masse/entries/this-is-my-first-post</a></div></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<p>使用下划线”<em>“来分割字符串(单词)可能会和链接的样式冲突重叠，而影响阅读性。<br>但实际上，”-“和”</em>“对URL中字符串的分割语意上还是有些差异的：”-“分割的字符串(单词)一般各自都具有独立的含义，<br>可参见上面的例子。而”_”一般用于对一个整体含义的字符串做了层级的分割，方便阅读，例如你想在URL中体现一个ip地址的信息：210_110_25_88 .</p>
+<ul>
+<li><strong>URI中统一使用小写字母</strong><br>根据RFC3986定义，URI是对大小写敏感的，所以为了避免歧义，我们尽量用小写字符。但主机名(Host)和scheme（协议名称:http/ftp/…）对大小写是不敏感的。</li>
+<li><strong>URI中不要包含文件(脚本)的扩展名</strong><br>例如 .php .json 之内的就不要出现了，对于接口来说没有任何实际的意义。如果是想对返回的数据内容格式标示的话，通过HTTP Header中的Content-Type字段更好一些。</li>
+</ul>
+<hr>
+<h3 id="3-资源的原型"><a href="#3-资源的原型" class="headerlink" title="3.资源的原型"></a><a href="#3-资源的原型" title="3.资源的原型"></a>3.资源的原型</h3><ul>
+<li><p><strong>文档(Document)</strong><br>文档是资源的单一表现形式，可以理解为一个对象，或者数据库中的一条记录。<br>在请求文档时，要么返回文档对应的数据，要么会返回一个指向另外一个资源(文档)的链接。以下是几个基于文档定义的URI例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><a href="http://api.soccer.restapi.org/leagues/seattle" target="_blank" rel="noopener">http://api.soccer.restapi.org/leagues/seattle</a></div><div class="line"><a href="http://api.soccer.restapi.org/leagues/seattle/teams/trebuchet" target="_blank" rel="noopener">http://api.soccer.restapi.org/leagues/seattle/teams/trebuchet</a></div><div class="line"><a href="http://api.soccer.restapi.org/leagues/seattle/teams/trebuchet/players/mike" target="_blank" rel="noopener">http://api.soccer.restapi.org/leagues/seattle/teams/trebuchet/players/mike</a></div></pre></td></tr></table></figure>
+</li>
+<li><p><strong>集合(Collection)</strong><br>集合可以理解为是资源的一个容器(目录)，我们可以向里面添加资源(文档)。例如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><a href="http://api.soccer.restapi.org/leagues" target="_blank" rel="noopener">http://api.soccer.restapi.org/leagues</a></div><div class="line"><a href="http://api.soccer.restapi.org/leagues/seattle/teams" target="_blank" rel="noopener">http://api.soccer.restapi.org/leagues/seattle/teams</a></div><div class="line"><a href="http://api.soccer.restapi.org/leagues/seattle/teams/trebuchet/players" target="_blank" rel="noopener">http://api.soccer.restapi.org/leagues/seattle/teams/trebuchet/players</a></div></pre></td></tr></table></figure>
+</li>
+<li><p><strong>仓库(Store)</strong><br>仓库是客户端来管理的一个资源库，客户端可以向仓库中新增资源或者删除资源。客户端也可以批量获取到某个仓库下的所有资源。<br>仓库中的资源对外的访问不会提供单独URI的，客户端在创建资源时候的URI除外。例如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">PUT /users/1234/favorites/alonso</div></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<p>上面的例子我们可以理解为，我们向一个id是1234的用户的仓库(收藏夹)中，添加了一个名为alonso的资源。通俗点儿说：就是用户收藏了一个自己喜爱的球员阿隆索。</p>
+<ul>
+<li><strong>控制器(Controller)</strong><br>控制器资源模型，可以执行一个方法，支持参数输入，结果返回。<br>是为了除了标准操作:增删改查(CRUD)以外的一些逻辑操作。控制器(方法)一般定义子URI中末尾，并且不会有子资源(控制器)。<br>例如我们向用户重发ID为245743的消息：<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">POST /alerts/245743/resend</div></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<hr>
+<h3 id="4-URI命名规范"><a href="#4-URI命名规范" class="headerlink" title="4.URI命名规范"></a><a href="#4-URI命名规范" title="4.URI命名规范"></a>4.URI命名规范</h3><ul>
+<li>文档(Document)类型的资源用名词(短语)单数命名</li>
+<li>集合(Collection)类型的资源用名词(短语)复数命名</li>
+<li>仓库(Store)类型的资源用名词(短语)复数命名</li>
+<li>控制器(Controller)类型的资源用动词(短语)命名</li>
+<li>URI中有些字段可以是变量，在实际使用中可以按需替换<br><strong>例如一个资源URI可以这样定义：</strong><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><a href="http://api.soccer.restapi.org/leagues/&#123;leagueId&#125;/teams/&#123;teamId&#125;/players/&#123;playerId&amp;#125" target="_blank" rel="noopener">http://api.soccer.restapi.org/leagues/&#123;leagueId&#125;/teams/&#123;teamId&#125;/players/&#123;playerId&amp;#125</a>;</div></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<p>其中：leagueId,teamId,playerId 是变量(数字，字符串都类型都可以)。<br>CRUD的操作不要体现在URI中，HTTP协议中的操作符已经对CRUD做了映射。<br>CRUD是创建，读取，更新，删除这四个经典操作的简称<br><strong>例如删除的操作用REST规范执行的话，应该是这个样子：</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">DELETE /users/1234</div></pre></td></tr></table></figure>
+
+<p><strong>以下是几个错误的示例：</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">GET /deleteUser?id=1234 </div><div class="line">GET /deleteUser/1234 </div><div class="line">DELETE /deleteUser/1234 </div><div class="line">POST /users/1234/delete</div></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="5-URI的query字段"><a href="#5-URI的query字段" class="headerlink" title="5.URI的query字段"></a><a href="#5-URI的query字段" title="5.URI的query字段"></a>5.URI的query字段</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><a href="http://api.college.restapi.org/students/morgan/send-sms" target="_blank" rel="noopener">http://api.college.restapi.org/students/morgan/send-sms</a></div><div class="line"><a href="http://api.college.restapi.org/students/morgan/send-sms?text=hello" target="_blank" rel="noopener">http://api.college.restapi.org/students/morgan/send-sms?text=hello</a></div></pre></td></tr></table></figure>
+
+<p>以上的两个URI看起来很像，但实际的含义是有差别的。第一个URI是一个发送消息的Controller类型的API，第二个URI是发送一个text的内容是hello的消息。<br>在REST中,query字段一般作为查询的参数补充，也可以帮助标示一个唯一的资源。<br>但需要注意的是，作为一个提供查询功能的URI，无论是否有query条件，我们都应该保证结果的唯一性，一个URI对应的返回数据是不应该被改变的(在资源没有修改的情况下)。<br>HTTP中的缓存也可能缓存查询结果，这个也是我们需要知道的。</p>
+<ul>
+<li><p>Query参数可以作为Collection或Store类型资源的过滤条件来使用 例如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">GET /users //返回所有用户列表 </div><div class="line">GET /users?role=admin //返回权限为admin的用户列表</div></pre></td></tr></table></figure>
+</li>
+<li><p>Query参数可以作为Collection或Store资源列表分页标示使用<br>如果是一个简单的列表操作，可以这样设计：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">GET /users?pageSize=25&amp;pageStartIndex=50 </div><div class="line">如果是一个复杂的列表或查询操作的话，我们可以为资源设计一个Collection，因为复杂查询可能会涉及比较多的参数，建议使用Post的方式传入，例如这样：</div><div class="line">POST /users/search</div></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<hr>
+<h3 id="6-HTTP交互设计"><a href="#6-HTTP交互设计" class="headerlink" title="6.HTTP交互设计"></a><a href="#6-HTTP交互设计" title="6.HTTP交互设计"></a>6.HTTP交互设计</h3><h4 id="HTTP请求方法的使用"><a href="#HTTP请求方法的使用" class="headerlink" title="HTTP请求方法的使用"></a><a href="#HTTP请求方法的使用" title="HTTP请求方法的使用"></a>HTTP请求方法的使用</h4><ul>
+<li>GET方法用来获取资源</li>
+<li>PUT方法可用来新增/更新Store类型的资源</li>
+<li>PUT方法可用来更新一个资源</li>
+<li>POST方法可用来创建一个资源</li>
+<li>POST方法可用来触发执行一个Controller类型资源</li>
+<li>DELETE方法用于删除资源<blockquote>
+<p>一旦资源被删除，GET/HEAD方法访问被删除的资源时，要返回404<br>DELETE是一个比较纯粹的方法，我们不能对其做任何的重构或者定义，不可附加其它状态条件，如果我们希望”软”删除一个资源，则这种需求应该由Controller类资源来实现</p>
+</blockquote>
+</li>
+</ul>
+<h4 id="HTTP响应状态码的使用"><a href="#HTTP响应状态码的使用" class="headerlink" title="HTTP响应状态码的使用"></a><a href="#HTTP响应状态码的使用" title="HTTP响应状态码的使用"></a>HTTP响应状态码的使用</h4><ul>
+<li>200 (“OK”) 用于一般性的成功返回</li>
+<li>200 (“OK”) 不可用于请求错误返回</li>
+<li>201 (“Created”) 资源被创建</li>
+<li>202 (“Accepted”) 用于Controller控制类资源异步处理的返回，仅表示请求已经收到。对于耗时比较久的处理，一般用异步处理来完成</li>
+<li>204 (“No Content”) 此状态可能会出现在PUT、POST、DELETE的请求中，一般表示资源存在，但消息体中不会返回任何资源相关的状态或信息。</li>
+<li>301 (“Moved Permanently”) 资源的URI被转移，需要使用新的URI访问</li>
+<li>302 (“Found”) 不推荐使用，此代码在HTTP1.1协议中被303/307替代。<br>我们目前对302的使用和最初HTTP1.0定义的语意是有出入的，应该只有在GET/HEAD方法下，<br>客户端才能根据Location执行自动跳转，而我们目前的客户端基本上是不会判断原请求方法的，无条件的执行临时重定向</li>
+<li>303 (“See Other”) 返回一个资源地址URI的引用，但不强制要求客户端获取该地址的状态(访问该地址)</li>
+<li>304 (“Not Modified”) 有一些类似于204状态，服务器端的资源与客户端最近访问的资源版本一致，并无修改，不返回资源消息体。可以用来降低服务端的压力</li>
+<li>307 (“Temporary Redirect”) 目前URI不能提供当前请求的服务，临时性重定向到另外一个URI。在HTTP1.1中307是用来替代早期HTTP1.0中使用不当的302</li>
+<li>400 (“Bad Request”) 用于客户端一般性错误返回, 在其它4xx错误以外的错误，也可以使用 400，具体错误信息可以放在body中</li>
+<li>401 (“Unauthorized”) 在访问一个需要验证的资源时，验证错误</li>
+<li>403 (“Forbidden”) 一般用于非验证性资源访问被禁止，例如对于某些客户端只开放部分API的访问权限，而另外一些API可能无法访问时，可以给予403状态</li>
+<li>404 (“Not Found”) 找不到URI对应的资源</li>
+<li>405 (“Method Not Allowed”) HTTP的方法不支持，例如某些只读资源，可能不支持POST/DELETE。但405的响应header中必须声明该URI所支持的方法</li>
+<li>406 (“Not Acceptable”) 客户端所请求的资源数据格式类型不被支持，例如客户端请求数据格式为application/xml，但服务器端只支持application/json</li>
+<li>409 (“Conflict”) 资源状态冲突，例如客户端尝试删除一个非空的Store资源</li>
+<li>412 (“Precondition Failed”) 用于有条件的操作不被满足时</li>
+<li>415 (“Unsupported Media Type”) 客户所支持的数据类型，服务端无法满足</li>
+<li>500 (“Internal Server Error”) 服务器端的接口错误，此错误于客户端无关</li>
+</ul>
+<hr>
+<h3 id="7-原数据设计"><a href="#7-原数据设计" class="headerlink" title="7.原数据设计"></a><a href="#7-原数据设计" title="7.原数据设计"></a>7.原数据设计</h3><h4 id="HTTP-Headers"><a href="#HTTP-Headers" class="headerlink" title="HTTP Headers"></a><a href="#HTTP-Headers" title="HTTP Headers"></a>HTTP Headers</h4><ul>
+<li>Content-Type 标示body的数据格式</li>
+<li>Content-Length body 数据体的大小，客户端可以根据此标示检验读取到的数据是否完整，也可以通过Header判断是否需要下载可能较大的数据体</li>
+<li>Last-Modified 用于服务器端的响应，是一个资源最后被修改的时间戳，客户端(缓存)可以根据此信息判断是否需要重新获取该资源</li>
+<li>ETag 服务器端资源版本的标示，客户端(缓存)可以根据此信息判断是否需要重新获取该资源，需要注意的是，ETag如果通过服务器随机生成，可能会存在多个主机对同一个资源产生不同ETag的问题</li>
+<li><p>Store类型的资源要支持有条件的PUT请求</p>
+<blockquote>
+<p>假设有两个客户端client#1/#2都向一个Store资源提交PUT请求，服务端是无法清楚的判断是要insert还是要update的，<br>所以我们要在header中加入条件标示if-Match，If-Unmodified-Since 来明确是本次调用API的意图。例如：</p>
+<p>client#1第一次向服务端发起一个请求 PUT /objects/2113<br>此时2113资源还不存在，那服务端会认为本次请求是一个insert操作，完成后，会返回 201 (“Created”)</p>
+<p>client#2再一次向服务端发起同一个请求 PUT /objects/2113 时，因2113资源已存在，服务端会返回 409<br>(“Conflict”)</p>
+<p>为了能让client#2的请求成功，或者说我们要清楚的表明本次操作是一次update操作，我们必须在header中加入一些条件标示， 例如<br>if-Match。我们需要给出资源的ETag(if-Match:Etag)，来表明我们希望更新资源的版本， 如果服务端版本一致，会返回200<br>(“OK”) 或者 204 (“No Content”)。如果服务端发现指定的版本与当前资源版本不一致，会返回 412<br>(“Precondition Failed”)</p>
+</blockquote>
+</li>
+<li><p><strong>Location</strong><br>在响应header中使用，一般为客户端感兴趣的资源URI,例如在成功创建一个资源后，我们可以把新的资源URI放在Location中，如果是一个异步创建资源的请求，接口在响应202 (“Accepted”)的同时可以给予客户端一个异步状态查询的地址</p>
+</li>
+<li><strong>Cache-Control, Expires, Date</strong><br>对于REST接口来说，如果某些接口实时性要求不高的情况下，我们可以使用max-age来指定一个小的缓存时间，这样对客户端和服务器端双方都是有利的。一般来说只对GET方法且返回200的情况下使用缓存，在某些情况下我们也可以对返回3xx或者4xx的情况下做缓存，可以防范错误访问带来的负载。<br>通过缓存机制提升接口响应性能,同时根据实际需要也可以禁止客户端对接口请求做缓存。<br>我们可以自定义一些头信息，作为客户端和服务器间的通信使用，但不能改变HTTP方法的性质。自定义头尽量简单明了，不要用body中的信息对其作补充说明。</li>
+</ul>
+<hr>
+<h3 id="8-数据媒体类型-Media-Type"><a href="#8-数据媒体类型-Media-Type" class="headerlink" title="8.数据媒体类型(Media Type)"></a><a href="#8-数据媒体类型-Media-Type" title="8.数据媒体类型(Media Type)"></a>8.数据媒体类型(Media Type)</h3><p>定义如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">Content-Type: type &quot;/&quot; subtype *( &quot;;&quot; parameter ) </div><div class="line">两个实例：</div><div class="line">Content-type: text/html; charset=ISO-8859-4 </div><div class="line">Content-type: text/plain; charset=&quot;us-ascii&quot; </div><div class="line"></div><div class="line">type 主类型一般为：application, audio, image, message, model, multipart, text, video。REST接口的主类型一般使用application</div></pre></td></tr></table></figure>
+
+<p><strong>数据媒体类型(Media Type)设计</strong></p>
+<ul>
+<li>设计上来说，服务器端可以支持多种媒体类型</li>
+<li>可以通过URI的查询字段来指定客户端希望的数据类型<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">GET /bookmarks/mikemassedotcom?accept=application/xml</div></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<hr>
+<h3 id="9-数据媒体格式的设计"><a href="#9-数据媒体格式的设计" class="headerlink" title="9.数据媒体格式的设计"></a><a href="#9-数据媒体格式的设计" title="9.数据媒体格式的设计"></a>9.数据媒体格式的设计</h3><ul>
+<li><p>body的媒体格式<br>json是一种流行且轻便友好的格式，json是一种无序的键值对的集合，其中key是需要用双引号引起来的，value如果是数字可以不用双引号，如果是非数字的格式需要使用双引号。<br>这是一个json格式的例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">&quot;firstName&quot; : &quot;Osvaldo&quot;,</div><div class="line">&quot;lastName&quot; : &quot;Alonso&quot;, &quot;firstNamePronunciation&quot; : &quot;ahs-VAHL-doe&quot;, &quot;number&quot; : 6,</div><div class="line">&quot;birthDate&quot; : &quot;1985-11-11&quot;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>json是允许大小写混用命名的，但要避免使用特殊符号</p>
+</li>
+<li>除了json我们也可以使用其他常用的格式，例如xml,html等</li>
+<li>body本身只应包含资源相关的信息，不要附加其它传输状态的信息</li>
+</ul>
+<hr>
+<h3 id="10-错误响应描述"><a href="#10-错误响应描述" class="headerlink" title="10.错误响应描述"></a><a href="#10-错误响应描述" title="10.错误响应描述"></a>10.错误响应描述</h3><ul>
+<li><p>错误信息的格式应该保持一致，例如用以下方式(json格式):</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">  &quot;id&quot; : Text,  //错误唯一标示id</div><div class="line">  &quot;description&quot; : Text  //错误具体描述</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>如果有多个错误，可以用json数组来描述：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">  &quot;elements&quot; : [</div><div class="line">    &#123;</div><div class="line">      &quot;id&quot; : &quot;Update Failed&quot;,</div><div class="line">      &quot;description&quot; : &quot;Failed to update /users/1234&quot;</div><div class="line">    &#125;</div><div class="line">  ]</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>错误类型需要保持统一</p>
+</li>
+</ul>
+<hr>
+<h3 id="11-客户端关注的问题"><a href="#11-客户端关注的问题" class="headerlink" title="11.客户端关注的问题"></a><a href="#11-客户端关注的问题" title="11.客户端关注的问题"></a>11.客户端关注的问题</h3><h4 id="接口版本管理"><a href="#接口版本管理" class="headerlink" title="接口版本管理"></a><a href="#接口版本管理" title="接口版本管理"></a>接口版本管理</h4><ul>
+<li>一个资源，只用一种单一的URI来标示，资源的版本不应该体现在URI中</li>
+<li>资源的版本是可以由客户端来指定的，并且提供向后兼容</li>
+<li>ETag可以用来管理资源的版本，有助于客户端缓存的应用</li>
+</ul>
+<h4 id="接口的安全"><a href="#接口的安全" class="headerlink" title="接口的安全"></a><a href="#接口的安全" title="接口的安全"></a>接口的安全</h4><ul>
+<li>使用OAuth认证，对敏感资源保护</li>
+<li>使用API管理策略，或管理平台（Apigee, Mashery）</li>
+</ul>
+<h4 id="接口数据响应的结构"><a href="#接口数据响应的结构" class="headerlink" title="接口数据响应的结构"></a><a href="#接口数据响应的结构" title="接口数据响应的结构"></a>接口数据响应的结构</h4><ul>
+<li><p>客户端可以指定接口返回需要的资源字段，或者指定不希望返回的字段，这样有助于提升接</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">口交互的效率，较少带宽的浪费</div><div class="line">只获许部分字段：</div><div class="line">GET /students/morgan?fields=(firstName, birthDate)</div><div class="line"> </div><div class="line">不希望获取某些字段：</div><div class="line">GET /students/morgan?fields=!(address,schedule!(wednesday, friday))</div></pre></td></tr></table></figure>
+</li>
+<li><p>资源数据中可以包含嵌入式链接，用来描述查询资源的子集，我们也可以传入相关参数，要求服务端替换链接为实际的数据</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">  &quot;firstName&quot; : &quot;Morgan&quot;,</div><div class="line">  &quot;birthDate&quot; : &quot;1992-07-31&quot;,</div><div class="line">  # Other fields…</div><div class="line">  &quot;links&quot; : &#123;</div><div class="line">    &quot;self&quot; : &#123;</div><div class="line">      &quot;href&quot; : &quot;<a href="http://api.college.restapi.org/students/morgan&amp;quot" target="_blank" rel="noopener">http://api.college.restapi.org/students/morgan&amp;quot</a>;,</div><div class="line">      &quot;rel&quot; : &quot;<a href="http://api.relations.wrml.org/common/self&amp;quot" target="_blank" rel="noopener">http://api.relations.wrml.org/common/self&amp;quot</a>;</div><div class="line">    &#125;,</div><div class="line">    &quot;favoriteClass&quot; : &#123;</div><div class="line">      &quot;href&quot; : &quot;<a href="http://api.college.restapi.org/classes/japn-301&amp;quot" target="_blank" rel="noopener">http://api.college.restapi.org/classes/japn-301&amp;quot</a>;,   </div><div class="line">      &quot;rel&quot; : &quot;<a href="http://api.relations.wrml.org/college/favoriteClass&amp;quot" target="_blank" rel="noopener">http://api.relations.wrml.org/college/favoriteClass&amp;quot</a>;</div><div class="line">    &#125;,</div><div class="line">    # Other links…</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line"> </div><div class="line">如果我们传入embed=(favoriteClass)的参数，返回的数据中将用实际的内容替换links里的对应的潜入资源：</div><div class="line"># Request</div><div class="line">GET /students/morgan?embed=(favoriteClass)</div><div class="line"> </div><div class="line"># Response</div><div class="line">&#123;</div><div class="line">  &quot;firstName&quot; : &quot;Morgan&quot;,</div><div class="line">  &quot;birthDate&quot; : &quot;1992-07-31&quot;,</div><div class="line">  &quot;favoriteClass&quot; : &#123; //需要返回的嵌入数据</div><div class="line">    &quot;id&quot; : &quot;japn-301&quot;,</div><div class="line">    &quot;name&quot; : &quot;Third-Year Japanese&quot;,</div><div class="line">    &quot;links&quot; : &#123;</div><div class="line">      &quot;self&quot; : &#123;</div><div class="line">        &quot;href&quot; : &quot;<a href="http://api.college.restapi.org/classes/japn-301&amp;quot" target="_blank" rel="noopener">http://api.college.restapi.org/classes/japn-301&amp;quot</a>;,    </div><div class="line">        &quot;rel&quot; : &quot;<a href="http://api.relations.wrml.org/common/self&amp;quot" target="_blank" rel="noopener">http://api.relations.wrml.org/common/self&amp;quot</a>;</div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"> </div><div class="line"># Other fields…</div><div class="line">  &quot;links&quot; : &#123;</div><div class="line">    &quot;self&quot; : &#123;</div><div class="line">      &quot;href&quot; : &quot;<a href="http://api.college.restapi.org/students/morgan&amp;quot" target="_blank" rel="noopener">http://api.college.restapi.org/students/morgan&amp;quot</a>;,</div><div class="line">      &quot;rel&quot; : &quot;<a href="http://api.relations.wrml.org/common/self&amp;quot" target="_blank" rel="noopener">http://api.relations.wrml.org/common/self&amp;quot</a>;</div><div class="line">    &#125;,</div><div class="line">    # 之前的嵌入式链接favoriteClass,已被替换为实体数据</div><div class="line">    # Other links…</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line"> </div><div class="line"> </div><div class="line">#其中嵌入式链接信息中的 rel ,一般是对 href 资源如何交互的描述，例如是通过 GET 还是 POST 方法，可以是以下的结构:</div><div class="line">&#123;</div><div class="line">  &quot;name&quot;: &quot;morgan&quot;,</div><div class="line">  &quot;method&quot;: &quot;GET&quot;,</div><div class="line">  … #其它描述字段</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h4 id="JavaScript客户端"><a href="#JavaScript客户端" class="headerlink" title="JavaScript客户端"></a><a href="#JavaScript客户端" title="JavaScript客户端"></a>JavaScript客户端</h4><ul>
+<li>目前主流的浏览器对JavaScript的支持越来越完善，因此对于WEB应用来说，我们完全可以把客户单看成一个JavaScript客户端。<br>一般浏览器对于跨域的操作都有一定的安全策略，通常我们可以使用JSONP来解决跨域接口访问的限制</li>
+<li>通过CORS(Cross-Origin Resource Sharing)来解决跨域访问，此方法与JSONP相比，支持更多的方法，JSONP只能用于GET请求, 一般现代的浏览器会支持CORS的方式</li>
+</ul>
+
+    </article>
+    <!-- 前后页  -->
+    <ul class="post-pager">
+        
+        
+            <li class="previous">
+                <a href= "/2018/01/06/SpringBoot入门/" title= SpringBoot入门 >
+                    <span>Previous Post</span>
+                    <span>SpringBoot入门</span>
+                </a>
+            </li>
+        
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
+
+    <div id="lv-container" data-id="city" data-uid= MTAyMC8zMDQwOC82OTYy>
+        <script type="text/javascript">
+            (function (d, s) {
+                var j, e = d.getElementsByTagName(s)[0];
+                if (typeof LivereTower === 'function') { return; }
+                j = d.createElement(s);
+                j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+                j.async = true;
+
+                e.parentNode.insertBefore(j, e);
+            })(document, 'script');
+        </script>
+        <noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+    </div>
+
+<!-- City版安装代码已完成 -->
+    
+    
+    <!--PC版-->
+
+    <!--PC版-->
+
+
+    
+    <!-- 评论 -->
+</main>
+            <!-- profile -->
+            
+        </div>
+        <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+    <div class="social">
+        
+    
+        
+            
+                <a href="mailto:958988867@qq.com" class="iconfont-archer email" title=email ></a>
+            
+        
+    
+        
+            
+                <a href="https://github.com/bestRiven" class="iconfont-archer github" target="_blank" title="github"></a>
+            
+        
+    
+        
+            
+                <a href="https://weibo.com/zhangyu20?is_all=1" class="iconfont-archer weibo" target="_blank" title="weibo"></a>
+            
+        
+    
+        
+            
+                <a href="/atom.xml" class="iconfont-archer rss" target="_blank" title="rss"></a>
+            
+        
+    
+
+    </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by <a href="https://hexo.io/" target="_blank">Hexo</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">Theme <a href="https://github.com/fi3ework/hexo-theme-archer" target="_blank">archer</a></span>
+    </div>
+    <!-- 不蒜子  -->
+    
+</footer>
+    </div>
+    <!-- toc -->
+    
+    <div class="toc-wrapper">
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#REST-API设计与参考规范"><span class="toc-number">1.</span> <span class="toc-text">REST API设计与参考规范</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-参考文章"><span class="toc-number">1.1.</span> <span class="toc-text">1.参考文章</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-URI格式规范"><span class="toc-number">1.2.</span> <span class="toc-text">2.URI格式规范</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-资源的原型"><span class="toc-number">1.3.</span> <span class="toc-text">3.资源的原型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-URI命名规范"><span class="toc-number">1.4.</span> <span class="toc-text">4.URI命名规范</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-URI的query字段"><span class="toc-number">1.5.</span> <span class="toc-text">5.URI的query字段</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-HTTP交互设计"><span class="toc-number">1.6.</span> <span class="toc-text">6.HTTP交互设计</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#HTTP请求方法的使用"><span class="toc-number">1.6.1.</span> <span class="toc-text">HTTP请求方法的使用</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#HTTP响应状态码的使用"><span class="toc-number">1.6.2.</span> <span class="toc-text">HTTP响应状态码的使用</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-原数据设计"><span class="toc-number">1.7.</span> <span class="toc-text">7.原数据设计</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#HTTP-Headers"><span class="toc-number">1.7.1.</span> <span class="toc-text">HTTP Headers</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8-数据媒体类型-Media-Type"><span class="toc-number">1.8.</span> <span class="toc-text">8.数据媒体类型(Media Type)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#9-数据媒体格式的设计"><span class="toc-number">1.9.</span> <span class="toc-text">9.数据媒体格式的设计</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#10-错误响应描述"><span class="toc-number">1.10.</span> <span class="toc-text">10.错误响应描述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#11-客户端关注的问题"><span class="toc-number">1.11.</span> <span class="toc-text">11.客户端关注的问题</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#接口版本管理"><span class="toc-number">1.11.1.</span> <span class="toc-text">接口版本管理</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#接口的安全"><span class="toc-number">1.11.2.</span> <span class="toc-text">接口的安全</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#接口数据响应的结构"><span class="toc-number">1.11.3.</span> <span class="toc-text">接口数据响应的结构</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#JavaScript客户端"><span class="toc-number">1.11.4.</span> <span class="toc-text">JavaScript客户端</span></a></li></ol></li></ol></li></ol>
+    </div>
+    
+    <div class="back-top">&#xe639;</div>
+    <div class="sidebar">
+    <div class="sidebar-header sidebar-header-show-archive">
+        <div class="sidebar-category">
+            <span class="sidebar-archive-link"><span class="iconfont-archer">&#xe67d;</span>Archive</span>
+            <span class="sidebar-tags-link"><span class="iconfont-archer">&#xe610;</span>Tag</span>
+        </div>
+    </div>
+    <div class="sidebar-content sidebar-content-show-archive">
+          <div class="sidebar-archive">
+    <!-- 在ejs中将archive按照时间排序 -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-archive"> Total : 3 </div>
+    
+    <div class="post-archive">
+    
+    
+    
+    
+    <div class="archive-year"> 2018 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/06</span><a class="archive-post-title" href= "/2018/01/06/hello-world/" >Hello World</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> Invalid date </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">Invalid date</span><a class="archive-post-title" href= "/2018/01/06/SpringBoot入门/" >SpringBoot入门</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> Invalid date </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">Invalid date</span><a class="archive-post-title" href= "/2018/01/06/REST API设计与参考规范/" >REST API设计与参考规范</a>
+        </li>
+    
+    </div>
+  </div>
+        <div class="sidebar-tags">
+    <div class="sidebar-tags-name">
+    
+        <span class="sidebar-tag-name"><a href= "#">技术文章</a></span>
+    
+        <span class="sidebar-tag-name"><a href= "#">日常随笔</a></span>
+    
+    </div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+    缺失模块。<br/>
+    1、请确保node版本大于6.2<br/>
+    2、在博客根目录（注意不是archer根目录）执行以下命令：<br/>
+    <span style="color: #f75357; font-size: 1rem; line-height: 2rem;">npm i hexo-generator-json-content --save</span><br/>
+    3、在根目录_config.yml里添加配置：
+    <pre style="color: #787878; font-size: 0.6rem;">
+jsonContent:
+  meta: false
+  pages: false
+  posts:
+    title: true
+    date: true
+    path: true
+    text: false
+    raw: false
+    content: false
+    slug: false
+    updated: false
+    comments: false
+    link: false
+    permalink: false
+    excerpt: false
+    categories: false
+    tags: true</pre>
+    </div> 
+    <div class="sidebar-tag-list"></div>
+</div>
+    </div>
+</div> 
+    <script>
+    var jsInfo = {
+        root: '/'
+    }
+</script>
+    <!-- 不蒜子  -->
+    
+    <!-- CNZZ统计  -->
+    
+    </div>
+    </body>
+</html>
+
+
